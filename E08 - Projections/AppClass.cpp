@@ -48,27 +48,55 @@ void Application::Display(void)
 	//calculate view and projection
 	switch (m_uProjection)
 	{
-	default:
 	case 1:
 		m_pCamera->ResetCamera();
 		break;
 	case 2:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetPositionTargetAndUpward(vector3(0.0f, 0.0f, 10.0f), vector3(0.0f, 0.0f, 1.0f), vector3(0.0f, 1.0f, 1.0f));
+		//m_pCamera->SetHorizontalPlanes(vector2(20.0f,-20.0f));
+		//m_pCamera->SetVerticalPlanes(vector2(20.0f, -20.0f));
 		break;
 	case 3:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetPositionTargetAndUpward(vector3(10.0f, 0.0f, 0.0f), vector3(0.0f, 0.0f, 0.0f), vector3(0.0f, 0.0f, 1.0f));
+		m_pCamera->SetHorizontalPlanes(vector2(20.0f, -20.0f));
+		m_pCamera->SetVerticalPlanes(vector2(20.0f, -20.0f));
 		break;
 	case 4:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetPositionTargetAndUpward(vector3(0.0f, 0.0f, -180.0f), vector3(0.0f, 0.0f, 1.0f), vector3(0.0f, 1.0f, 1.0f));
+		//m_pCamera->SetHorizontalPlanes(vector2(20.0f, -20.0f));
+		//m_pCamera->SetVerticalPlanes(vector2(20.0f, -20.0f));
 		break;
 	case 5:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetPositionTargetAndUpward(vector3(0.0f, 0.0f, -10.0f), vector3(0.0f, 0.0f, 1.0f), vector3(0.0f, 5.0f, 5.0f));
+		//m_pMesh2->Render(false);
+		//m_pCamera->SetNearFar(vector2(3.0f, -1.0f));
+		//m_pCamera->SetHorizontalPlanes(vector2(20.0f, -20.0f));
+		//m_pCamera->SetVerticalPlanes(vector2(20.0f, -20.0f));
 		break;
 	case 6:
+		// I couldnt think this one through 
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetPositionTargetAndUpward(vector3(0.0f, 0.0f, -10.0f), vector3(0.0f, 0.0f, 1.0f), vector3(0.0f, 1.0f, 1.0f));
+		//m_pMesh2->Render(false);
+		m_pCamera->SetNearFar(vector2(-5.0f, 1.0f));
+		//m_pCamera->SetHorizontalPlanes(vector2(20.0f, -20.0f));
+		//m_pCamera->SetVerticalPlanes(vector2(20.0f, -20.0f));
 		break;
 	case 7:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetPositionTargetAndUpward(vector3(0.0f, 0.0f, 40.0f), vector3(0.0f, 0.0f, 3.0f), vector3(-10.0f, -400.0f, -10.0f));
+		//m_pCamera->SetHorizontalPlanes(vector2(-20.0f, 20.0f));
+		//m_pCamera->SetVerticalPlanes(vector2(20.0f, -20.0f));
 		break;
 	}
 
