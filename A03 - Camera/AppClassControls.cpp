@@ -8,7 +8,7 @@ void Application::ProcessMouseMovement(sf::Event a_event)
 	sf::Vector2i window = m_pWindow->getPosition();
 	m_v3Mouse.x = static_cast<float>(mouse.x - window.x);
 	m_v3Mouse.y = static_cast<float>(mouse.y - window.y);
-	if(!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
+	if (!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
 		m_v3Mouse += vector3(-8.0f, -32.0f, 0.0f);
 	gui.io.MousePos = ImVec2(m_v3Mouse.x, m_v3Mouse.y);
 }
@@ -369,6 +369,8 @@ void Application::CameraRotation(float a_fSpeed)
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
 	//Change the Yaw and the Pitch of the camera
+	m_pCamera->ChangeYaw(fAngleY * 3.0f);
+	m_pCamera->ChangePitch(-fAngleX * 3.0f);
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
 //Keyboard
@@ -386,10 +388,32 @@ void Application::ProcessKeyboard(void)
 	if (fMultiplier)
 		fSpeed *= 5.0f;
 
+	// movement controls
+
+	// forward movement using w 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		m_pCamera->MoveForward(fSpeed);
+
+	// backward movement using s
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		m_pCamera->MoveForward(-fSpeed);
+
+	// left movement using a
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		m_pCamera->MoveSideways(-fSpeed);
+
+	// right movement using d
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		m_pCamera->MoveSideways(fSpeed);
+
+	// down movement using q
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		m_pCamera->MoveVertical(-fSpeed);
+
+	// up movement using e
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+		m_pCamera->MoveVertical(fSpeed);
+
 #pragma endregion
 }
 //Joystick
@@ -415,6 +439,7 @@ void Application::ProcessJoystick(void)
 		fVerticalSpeed *= 3.0f;
 	}
 
+
 	m_pCameraMngr->MoveForward(fForwardSpeed);
 	m_pCameraMngr->MoveSideways(fHorizontalSpeed);
 	m_pCameraMngr->MoveVertical(fVerticalSpeed);
@@ -423,6 +448,7 @@ void Application::ProcessJoystick(void)
 	//Change the Yaw and the Pitch of the camera
 	float fUSpeed = glm::radians(m_pController[m_uActCont]->axis[SimplexAxis_U] / 150.0f);
 	float fVSpeed = glm::radians(m_pController[m_uActCont]->axis[SimplexAxis_V] / 150.0f);
+
 	m_pCameraMngr->ChangeYaw(-fUSpeed);
 	m_pCameraMngr->ChangePitch(fVSpeed);
 #pragma endregion

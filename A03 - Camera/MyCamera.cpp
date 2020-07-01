@@ -73,12 +73,12 @@ void Simplex::MyCamera::Release(void)
 	//No pointers to deallocate
 }
 
-void Simplex::MyCamera::Swap(MyCamera & other)
+void Simplex::MyCamera::Swap(MyCamera& other)
 {
 	std::swap(m_v3Position, other.m_v3Position);
 	std::swap(m_v3Target, other.m_v3Target);
 	std::swap(m_v3Above, other.m_v3Above);
-	
+
 	std::swap(m_bPerspective, other.m_bPerspective);
 
 	std::swap(m_fFOV, other.m_fFOV);
@@ -124,7 +124,7 @@ void Simplex::MyCamera::SetPositionTargetAndUpward(vector3 a_v3Position, vector3
 	m_v3Target = a_v3Target;
 
 	m_v3Above = a_v3Position + glm::normalize(a_v3Upward);
-	
+
 	//Calculate the Matrix
 	CalculateProjectionMatrix();
 }
@@ -150,13 +150,71 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 	}
 }
 
+
+// forward, backward movement 
 void MyCamera::MoveForward(float a_fDistance)
 {
-	//The following is just an example and does not take in account the forward vector (AKA view vector)
-	m_v3Position += vector3(0.0f, 0.0f,-a_fDistance);
-	m_v3Target += vector3(0.0f, 0.0f, -a_fDistance);
-	m_v3Above += vector3(0.0f, 0.0f, -a_fDistance);
+	//the vector where we are looking minus the position gives us the forward vector
+	m_v3Forward = glm::normalize((m_v3Target - m_v3Position));
+	//need to normalize the vectors magnitude to 1 
+	// scale the vector with the distance float 
+	m_v3Position += m_v3Forward * a_fDistance;
+	m_v3Target += m_v3Forward * a_fDistance;
+	m_v3Above += m_v3Forward * a_fDistance;
+
 }
 
-void MyCamera::MoveVertical(float a_fDistance){}//Needs to be defined
-void MyCamera::MoveSideways(float a_fDistance){}//Needs to be defined
+// up down movement 
+void MyCamera::MoveVertical(float a_fDistance)
+{
+	//the above vector minus the position gives us the up vector
+	m_v3Up = glm::normalize((m_v3Above - m_v3Position));
+	//need to normalize the vectors magnitude to 1 
+	// scale the vector with the distance float 
+	m_v3Position += m_v3Up * a_fDistance;
+	m_v3Target += m_v3Up * a_fDistance;
+	m_v3Above += m_v3Up * a_fDistance;
+}
+
+// right and left movement 
+void MyCamera::MoveSideways(float a_fDistance)
+{
+	//cross product gives us a perpendicular line 
+	m_v3Side = glm::cross((m_v3Target - m_v3Position), (m_v3Above - m_v3Position));
+	// need to normalize the vectors magnitude to 1 
+	m_v3Side = glm::normalize(m_v3Side);
+	// scale the vector with the distance float 
+	m_v3Position += m_v3Side * a_fDistance;
+	m_v3Target += m_v3Side * a_fDistance;
+	m_v3Above += m_v3Side * a_fDistance;
+}
+
+void Simplex::MyCamera::ChangeYaw(float a_fDegree)
+{
+	// convert to radians
+	float angle = glm::radians(a_fDegree);
+
+	// rotation around y so up vector must be used in angleaxis
+	// add my local vectors to the globat target 
+	m_qOrientation = glm::angleAxis(angle, m_v3Up);
+	m_v3Forward = (m_v3Forward * m_qOrientation);
+	m_v3Side = (m_v3Side * m_qOrientation);
+	m_v3Target = m_v3Forward + m_v3Position;
+
+
+}
+
+void Simplex::MyCamera::ChangePitch(float a_fDegree)
+{
+	// convert to radians
+	float angle = glm::radians(a_fDegree);
+
+	// rotation around z so side vector must be used in angleaxis
+	// add my local vectors to the globat target and above vector
+	m_qOrientation = glm::angleAxis(angle, m_v3Side);
+	m_v3Forward = (m_v3Forward * m_qOrientation);
+	m_v3Up = (m_v3Up * m_qOrientation);
+	m_v3Above = m_v3Up + m_v3Position;
+	m_v3Target = m_v3Forward + m_v3Position;
+
+}
