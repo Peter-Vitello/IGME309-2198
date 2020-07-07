@@ -368,6 +368,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 		rb = halfMeasurementsB[i];
 		if (abs(translation[0] * m_m4ToWorld[0][i] + translation[1] * m_m4ToWorld[1][i] + translation[2] * m_m4ToWorld[2][i]) > ra + rb) return separation;
 	}
+	
 	//Tests axis xAxisABx
 	ra = halfMeasurementsA[1] * abs_m4ToWorld[2][0] + halfMeasurementsA[2] * abs_m4ToWorld[1][0];
 	rb = halfMeasurementsB[1] * abs_m4ToWorld[0][2] + halfMeasurementsB[2] * abs_m4ToWorld[0][1];
@@ -404,7 +405,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	ra = halfMeasurementsA[0] * abs_m4ToWorld[1][2] + halfMeasurementsA[1] * abs_m4ToWorld[0][2];
 	rb = halfMeasurementsB[0] * abs_m4ToWorld[2][1] + halfMeasurementsB[1] * abs_m4ToWorld[2][0];
 	if (abs(translation[1] * m_m4ToWorld[0][2] - translation[0] * m_m4ToWorld[1][2]) > ra + rb) return separation;
-
+	
 	//there is no axis test that separates this two objects
 	return eSATResults::SAT_NONE;
 }
