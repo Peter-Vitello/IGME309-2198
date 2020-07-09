@@ -346,7 +346,9 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 		}
 		if ( bMin > aMax || aMin > bMax)
 		{
+			
 			return separation;
+			
 		}
 	}
 
