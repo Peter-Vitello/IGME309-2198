@@ -91,39 +91,39 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	m_m4ToWorld = a_m4ModelMatrix;
 
 	//Calculate the 8 corners of the cube
-	vector3 v3Corner[8];
+
 	//Back square
-	v3Corner[0] = m_v3MinL;
-	v3Corner[1] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z);
-	v3Corner[2] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MinL.z);
-	v3Corner[3] = vector3(m_v3MaxL.x, m_v3MaxL.y, m_v3MinL.z);
+	m_v3CornerG[0] = m_v3MinL;
+	m_v3CornerG[1] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z);
+	m_v3CornerG[2] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MinL.z);
+	m_v3CornerG[3] = vector3(m_v3MaxL.x, m_v3MaxL.y, m_v3MinL.z);
 
 	//Front square
-	v3Corner[4] = vector3(m_v3MinL.x, m_v3MinL.y, m_v3MaxL.z);
-	v3Corner[5] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MaxL.z);
-	v3Corner[6] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MaxL.z);
-	v3Corner[7] = m_v3MaxL;
+	m_v3CornerG[4] = vector3(m_v3MinL.x, m_v3MinL.y, m_v3MaxL.z);
+	m_v3CornerG[5] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MaxL.z);
+	m_v3CornerG[6] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MaxL.z);
+	m_v3CornerG[7] = m_v3MaxL;
 
 	//Place them in world space
 	for (uint uIndex = 0; uIndex < 8; ++uIndex)
 	{
-		v3Corner[uIndex] = vector3(m_m4ToWorld * vector4(v3Corner[uIndex], 1.0f));
+		m_v3CornerG[uIndex] = vector3(m_m4ToWorld * vector4(m_v3CornerG[uIndex], 1.0f));
 	}
 
 	//Identify the max and min as the first corner
-	m_v3MaxG = m_v3MinG = v3Corner[0];
+	m_v3MaxG = m_v3MinG = m_v3CornerG[0];
 
 	//get the new max and min for the global box
 	for (uint i = 1; i < 8; ++i)
 	{
-		if (m_v3MaxG.x < v3Corner[i].x) m_v3MaxG.x = v3Corner[i].x;
-		else if (m_v3MinG.x > v3Corner[i].x) m_v3MinG.x = v3Corner[i].x;
+		if (m_v3MaxG.x < m_v3CornerG[i].x) m_v3MaxG.x = m_v3CornerG[i].x;
+		else if (m_v3MinG.x > m_v3CornerG[i].x) m_v3MinG.x = m_v3CornerG[i].x;
 
-		if (m_v3MaxG.y < v3Corner[i].y) m_v3MaxG.y = v3Corner[i].y;
-		else if (m_v3MinG.y > v3Corner[i].y) m_v3MinG.y = v3Corner[i].y;
+		if (m_v3MaxG.y < m_v3CornerG[i].y) m_v3MaxG.y = m_v3CornerG[i].y;
+		else if (m_v3MinG.y > m_v3CornerG[i].y) m_v3MinG.y = m_v3CornerG[i].y;
 
-		if (m_v3MaxG.z < v3Corner[i].z) m_v3MaxG.z = v3Corner[i].z;
-		else if (m_v3MinG.z > v3Corner[i].z) m_v3MinG.z = v3Corner[i].z;
+		if (m_v3MaxG.z < m_v3CornerG[i].z) m_v3MaxG.z = m_v3CornerG[i].z;
+		else if (m_v3MinG.z > m_v3CornerG[i].z) m_v3MinG.z = m_v3CornerG[i].z;
 	}
 
 	//we calculate the distance between min and max vectors
@@ -281,41 +281,8 @@ void MyRigidBody::AddToRenderList(void)
 
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
-	/*
-	Your code goes here instead of this comment;
-
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
-
 	//The unsigned integer that signifies separation
 	uint separation = 1;
-
-	//The vectors containing the half-measurements
-	std::vector<float> halfMeasurementsA;
-	std::vector<float> halfMeasurementsB;
-
-	//Half-width and center position of the other rigidbody
-	vector3 a_pCenter = a_pOther->GetCenterGlobal();
-	float a_pHalfWidth = a_pOther->m_v3HalfWidth.x;
-
-	//Finds the half-height and half-depth of the rigidbodies
-	float halfWidth = m_v3HalfWidth.x;
-	float m_v3HalfHeight = m_v3HalfWidth.y;
-	float m_v3HalfDepth = m_v3HalfWidth.z;
-	float a_pHalfHeight = a_pOther->m_v3HalfWidth.y;
-	float a_pHalfDepth = a_pOther->m_v3HalfWidth.z;
-
-	halfMeasurementsA.push_back(halfWidth);
-	halfMeasurementsA.push_back(m_v3HalfHeight);
-	halfMeasurementsA.push_back(m_v3HalfDepth);
-	halfMeasurementsB.push_back(a_pHalfWidth);
-	halfMeasurementsB.push_back(a_pHalfHeight);
-	halfMeasurementsB.push_back(a_pHalfDepth);
 
 	//The axes for face collision
 	vector3 xAxisA = m_m4ToWorld[0];
@@ -326,86 +293,63 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	vector3 yAxisB = a_pOther->m_m4ToWorld[1];
 	vector3 zAxisB = a_pOther->m_m4ToWorld[2];
 
-	//The axes for edge collision
-	vector3 xAxisABx = xAxisA * xAxisB;
-	vector3 xAxisABy = xAxisA * yAxisB;
-	vector3 xAxisABz = xAxisA * zAxisB;
-
-	vector3 yAxisABx = yAxisA * xAxisB;
-	vector3 yAxisABy = yAxisA * yAxisB;
-	vector3 yAxisABz = yAxisA * zAxisB;
-
-	vector3 zAxisABx = zAxisA * xAxisB;
-	vector3 zAxisABy = zAxisA * yAxisB;
-	vector3 zAxisABz = zAxisA * zAxisB;
+	// array of the axes we are testing 
+	std::vector<vector3> testAxes;
+	testAxes.push_back(xAxisA);
+	testAxes.push_back(yAxisA);
+	testAxes.push_back(zAxisA);//3
+	testAxes.push_back(xAxisB);
+	testAxes.push_back(yAxisB);
+	testAxes.push_back(zAxisB);//6
+	testAxes.push_back(glm::cross(xAxisA, xAxisB));
+	testAxes.push_back(glm::cross(xAxisA, yAxisB));
+	testAxes.push_back(glm::cross(xAxisA, zAxisB));//9
+	testAxes.push_back(glm::cross(yAxisA, xAxisB));
+	testAxes.push_back(glm::cross(yAxisA, yAxisB));
+	testAxes.push_back(glm::cross(yAxisA, zAxisB));//12
+	testAxes.push_back(glm::cross(zAxisA, xAxisB));
+	testAxes.push_back(glm::cross(zAxisA, yAxisB));
+	testAxes.push_back(glm::cross(zAxisA, zAxisB));
 	// **The axes were computed simply for reference while coding
 
-	//Computes translation vector and brings it into coordinate frame
-	vector3 translation = a_pCenter - this->GetCenterGlobal();
-	translation = vector3(glm::dot(translation, xAxisA), glm::dot(translation, yAxisA), glm::dot(translation, zAxisA));
+	// all 15 tests
+	for (int i = 0; i < testAxes.size(); i++)
+	{
+		float aMax = glm::dot(testAxes[i], m_v3CornerG[0]);
+		float bMax = glm::dot(testAxes[i], a_pOther->m_v3CornerG[0]);
+		float aMin = aMax;
+		float bMin = bMax;
+		
+		for (int j = 1; j < 8; j++)// calcutaing the maxs and and mins for a highest projection magnitude and a lowest projection magnitude 
+		{
+			// for object A
+			float magnitudeOfProjA = glm::dot(testAxes[i], m_v3CornerG[j]);
+			if (magnitudeOfProjA > aMax)
+			{
+				aMax = magnitudeOfProjA;
+			}
+			if(magnitudeOfProjA < aMin)
+			{
+				aMin = magnitudeOfProjA;
+			}
 
-	//Computes absolute value of rotation matrix
-	matrix4 abs_m4ToWorld;
-
-	for (int x = 0; x < 3; x++) {
-		for (int y = 0; y < 3; y++) {
-			abs_m4ToWorld[x,y] = abs(m_m4ToWorld[x, y]) + 0.000001f;
+			// for object b 
+			float magnitudeOfProjB = glm::dot(testAxes[i], a_pOther->m_v3CornerG[j]);
+			if (magnitudeOfProjB > bMax)
+			{
+				bMax = magnitudeOfProjB;
+			}
+			if (magnitudeOfProjB < bMin)
+			{
+				bMin = magnitudeOfProjB;
+			}
+		}
+		if ( bMin > aMax || aMin > bMax)
+		{
+			return separation;
 		}
 	}
 
-	//The radii of the OBB
-	float ra, rb;
-
-	//Tests axes xAxisA, yAxisA, and zAxisA
-	for (int i = 0; i < 3; i++) {
-			ra = halfMeasurementsA[i];
-			rb = halfMeasurementsB[0] * abs_m4ToWorld[i][0] + halfMeasurementsB[1] * abs_m4ToWorld[i][1] + halfMeasurementsB[2] * abs_m4ToWorld[i][2];
-			if (abs(translation[i]) > ra + rb) return separation;
-	}
-	//Tests axes xAxisB, yAxisB, and zAxisB
-	for (int i = 0; i < 3; i++) {
-		ra = halfMeasurementsA[0] * abs_m4ToWorld[0][i] + halfMeasurementsA[1] * abs_m4ToWorld[1][i] + halfMeasurementsA[2] * abs_m4ToWorld[2][i];
-		rb = halfMeasurementsB[i];
-		if (abs(translation[0] * m_m4ToWorld[0][i] + translation[1] * m_m4ToWorld[1][i] + translation[2] * m_m4ToWorld[2][i]) > ra + rb) return separation;
-	}
-	
-	//Tests axis xAxisABx
-	ra = halfMeasurementsA[1] * abs_m4ToWorld[2][0] + halfMeasurementsA[2] * abs_m4ToWorld[1][0];
-	rb = halfMeasurementsB[1] * abs_m4ToWorld[0][2] + halfMeasurementsB[2] * abs_m4ToWorld[0][1];
-	if (abs(translation[2] * m_m4ToWorld[1][0] - translation[1] * m_m4ToWorld[2][0]) > ra + rb) return separation;
-	//Tests axis xAxisABy
-	ra = halfMeasurementsA[1] * abs_m4ToWorld[2][1] + halfMeasurementsA[2] * abs_m4ToWorld[1][1];
-	rb = halfMeasurementsB[0] * abs_m4ToWorld[0][2] + halfMeasurementsB[2] * abs_m4ToWorld[0][0];
-	if (abs(translation[2] * m_m4ToWorld[1][1] - translation[1] * m_m4ToWorld[2][1]) > ra + rb) return separation;
-	//Tests axis xAxisABz
-	ra = halfMeasurementsA[1] * abs_m4ToWorld[2][2] + halfMeasurementsA[2] * abs_m4ToWorld[1][2];
-	rb = halfMeasurementsB[0] * abs_m4ToWorld[0][1] + halfMeasurementsB[1] * abs_m4ToWorld[0][0];
-	if (abs(translation[2] * m_m4ToWorld[1][2] - translation[1] * m_m4ToWorld[2][2]) > ra + rb) return separation;
-	//Tests axis yAxisABx
-	ra = halfMeasurementsA[0] * abs_m4ToWorld[2][0] + halfMeasurementsA[2] * abs_m4ToWorld[0][0];
-	rb = halfMeasurementsB[1] * abs_m4ToWorld[1][2] + halfMeasurementsB[2] * abs_m4ToWorld[1][1];
-	if (abs(translation[0] * m_m4ToWorld[2][0] - translation[2] * m_m4ToWorld[0][0]) > ra + rb) return separation;
-	//Tests axis yAxisABy
-	ra = halfMeasurementsA[0] * abs_m4ToWorld[2][1] + halfMeasurementsA[2] * abs_m4ToWorld[0][1];
-	rb = halfMeasurementsB[0] * abs_m4ToWorld[1][2] + halfMeasurementsB[2] * abs_m4ToWorld[1][0];
-	if (abs(translation[0] * m_m4ToWorld[2][1] - translation[2] * m_m4ToWorld[0][1]) > ra + rb) return separation;
-	//Tests axis yAxisABz
-	ra = halfMeasurementsA[0] * abs_m4ToWorld[2][2] + halfMeasurementsA[2] * abs_m4ToWorld[0][2];
-	rb = halfMeasurementsB[0] * abs_m4ToWorld[1][1] + halfMeasurementsB[1] * abs_m4ToWorld[1][0];
-	if (abs(translation[0] * m_m4ToWorld[2][2] - translation[2] * m_m4ToWorld[0][2]) > ra + rb) return separation;
-	//Tests axis zAxisABx
-	ra = halfMeasurementsA[0] * abs_m4ToWorld[1][0] + halfMeasurementsA[1] * abs_m4ToWorld[0][0];
-	rb = halfMeasurementsB[1] * abs_m4ToWorld[2][2] + halfMeasurementsB[2] * abs_m4ToWorld[2][1];
-	if (abs(translation[1] * m_m4ToWorld[0][0] - translation[0] * m_m4ToWorld[1][0]) > ra + rb) return separation;
-	//Tests axis zAxisABy
-	ra = halfMeasurementsA[0] * abs_m4ToWorld[1][1] + halfMeasurementsA[1] * abs_m4ToWorld[0][1];
-	rb = halfMeasurementsB[0] * abs_m4ToWorld[2][2] + halfMeasurementsB[2] * abs_m4ToWorld[2][0];
-	if (abs(translation[1] * m_m4ToWorld[0][1] - translation[0] * m_m4ToWorld[1][1]) > ra + rb) return separation;
-	//Tests axis zAxisABz
-	ra = halfMeasurementsA[0] * abs_m4ToWorld[1][2] + halfMeasurementsA[1] * abs_m4ToWorld[0][2];
-	rb = halfMeasurementsB[0] * abs_m4ToWorld[2][1] + halfMeasurementsB[1] * abs_m4ToWorld[2][0];
-	if (abs(translation[1] * m_m4ToWorld[0][2] - translation[0] * m_m4ToWorld[1][2]) > ra + rb) return separation;
-	
 	//there is no axis test that separates this two objects
 	return eSATResults::SAT_NONE;
 }
