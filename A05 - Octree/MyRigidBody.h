@@ -22,6 +22,8 @@ class MyRigidBody
 
 	float m_fRadius = 0.0f; //Radius
 
+	vector3 v3Corner[8]; // corners
+
 	vector3 m_v3ColorColliding = C_RED; //Color when colliding
 	vector3 m_v3ColorNotColliding = C_WHITE; //Color when not colliding
 

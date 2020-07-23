@@ -309,7 +309,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	testAxes.push_back(glm::cross(yAxisA, zAxisB));//12
 	testAxes.push_back(glm::cross(zAxisA, xAxisB));
 	testAxes.push_back(glm::cross(zAxisA, yAxisB));
-	testAxes.push_back(glm::cross(zAxisA, zAxisB));
+	testAxes.push_back(glm::cross(zAxisA, zAxisB));//15
 	// **The axes were computed simply for reference while coding
 
 	// all 15 tests
@@ -322,7 +322,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 		
 		for (int j = 1; j < 8; j++)// calcutaing the maxs and and mins for a highest projection magnitude and a lowest projection magnitude 
 		{
-			// for object A
+			// for the creeper object 
 			float magnitudeOfProjA = glm::dot(testAxes[i], m_v3CornerG[j]);
 			if (magnitudeOfProjA > aMax)
 			{
@@ -333,7 +333,7 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 				aMin = magnitudeOfProjA;
 			}
 
-			// for object b 
+			// for the steve object
 			float magnitudeOfProjB = glm::dot(testAxes[i], a_pOther->m_v3CornerG[j]);
 			if (magnitudeOfProjB > bMax)
 			{
@@ -344,11 +344,10 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 				bMin = magnitudeOfProjB;
 			}
 		}
+		// this means they are not colliding 
 		if ( bMin > aMax || aMin > bMax)
 		{
-			
 			return separation;
-			
 		}
 	}
 

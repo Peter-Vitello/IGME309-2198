@@ -23,7 +23,6 @@ void MyRigidBody::Init(void)
 
 	m_v3HalfWidth = ZERO_V3;
 	m_v3ARBBSize = ZERO_V3;
-
 	m_m4ToWorld = IDENTITY_M4;
 
 	m_nCollidingCount = 0;
@@ -94,7 +93,7 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	m_v3CenterG = vector3(m_m4ToWorld * vector4(m_v3CenterL, 1.0f));
 
 	//Calculate the 8 corners of the cube
-	vector3 v3Corner[8];
+
 	//Back square
 	v3Corner[0] = m_v3MinL;
 	v3Corner[1] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z);
@@ -277,16 +276,75 @@ void MyRigidBody::ClearCollidingList(void)
 }
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
-	/*
-	Your code goes here instead of this comment;
+	//The unsigned integer that signifies separation
+	uint separation = 1;
 
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
+	//The axes for face collision
+	vector3 xAxisA = m_m4ToWorld[0];
+	vector3 yAxisA = m_m4ToWorld[1];
+	vector3 zAxisA = m_m4ToWorld[2];
+
+	vector3 xAxisB = a_pOther->m_m4ToWorld[0];
+	vector3 yAxisB = a_pOther->m_m4ToWorld[1];
+	vector3 zAxisB = a_pOther->m_m4ToWorld[2];
+
+	// array of the axes we are testing 
+	std::vector<vector3> testAxes;
+	testAxes.push_back(xAxisA);
+	testAxes.push_back(yAxisA);
+	testAxes.push_back(zAxisA);//3
+	testAxes.push_back(xAxisB);
+	testAxes.push_back(yAxisB);
+	testAxes.push_back(zAxisB);//6
+	testAxes.push_back(glm::cross(xAxisA, xAxisB));
+	testAxes.push_back(glm::cross(xAxisA, yAxisB));
+	testAxes.push_back(glm::cross(xAxisA, zAxisB));//9
+	testAxes.push_back(glm::cross(yAxisA, xAxisB));
+	testAxes.push_back(glm::cross(yAxisA, yAxisB));
+	testAxes.push_back(glm::cross(yAxisA, zAxisB));//12
+	testAxes.push_back(glm::cross(zAxisA, xAxisB));
+	testAxes.push_back(glm::cross(zAxisA, yAxisB));
+	testAxes.push_back(glm::cross(zAxisA, zAxisB));//15
+	// **The axes were computed simply for reference while coding
+
+	// all 15 tests
+	for (int i = 0; i < testAxes.size(); i++)
+	{
+		float aMax = glm::dot(testAxes[i], v3Corner[0]);
+		float bMax = glm::dot(testAxes[i], a_pOther->v3Corner[0]);
+		float aMin = aMax;
+		float bMin = bMax;
+
+		for (int j = 1; j < 8; j++)// calcutaing the maxs and and mins for a highest projection magnitude and a lowest projection magnitude 
+		{
+			// for the creeper object 
+			float magnitudeOfProjA = glm::dot(testAxes[i], v3Corner[j]);
+			if (magnitudeOfProjA > aMax)
+			{
+				aMax = magnitudeOfProjA;
+			}
+			if (magnitudeOfProjA < aMin)
+			{
+				aMin = magnitudeOfProjA;
+			}
+
+			// for the steve object
+			float magnitudeOfProjB = glm::dot(testAxes[i], a_pOther->v3Corner[j]);
+			if (magnitudeOfProjB > bMax)
+			{
+				bMax = magnitudeOfProjB;
+			}
+			if (magnitudeOfProjB < bMin)
+			{
+				bMin = magnitudeOfProjB;
+			}
+		}
+		// this means they are not colliding 
+		if (bMin > aMax || aMin > bMax)
+		{
+			return separation;
+		}
+	}
 
 	//there is no axis test that separates this two objects
 	return 0;
