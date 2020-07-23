@@ -36,7 +36,7 @@ void Application::InitVariables(void)
 	}
 
 	m_uOctantLevels = 1;
-	//m_pRoot = new Octree(m_uOctantLevels, 5);
+	m_pRoot = new OctreeNode(m_uOctantLevels, 5);
 	m_pEntityMngr->Update();
 }
 void Application::Update(void)
