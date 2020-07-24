@@ -3,6 +3,11 @@
 //Octree()
 //Simplex
 
+
+Simplex::uint Simplex::OctreeNode::m_uOctreeNodeCount = 0; //will store the number of OctreeNodes instantiated
+Simplex::uint Simplex::OctreeNode::m_uMaxLevel = 0;//will store the maximum level an OctreeNode can go to
+Simplex::uint Simplex::OctreeNode::m_uIdealEntityCount = 0; //will tell how many ideal Entities this object will contain
+
 Simplex::OctreeNode::OctreeNode(uint a_nMaxLevel, uint a_nIdealEntityCount) // the root Octree
 {
 	m_pEntityMngr = MyEntityManager::GetInstance();
