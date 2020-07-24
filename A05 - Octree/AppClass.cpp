@@ -37,7 +37,9 @@ void Application::InitVariables(void)
 
 	m_uOctantLevels = 1;
 	m_pRoot = new OctreeNode(m_uOctantLevels, 5);
-	m_pEntityMngr->Update();
+	//m_pEntityMngr->Update();
+	m_pRoot->CollisionCheck();
+
 }
 void Application::Update(void)
 {
@@ -51,7 +53,8 @@ void Application::Update(void)
 	CameraRotation();
 	
 	//Update Entity Manager
-	m_pEntityMngr->Update();
+	//m_pEntityMngr->Update();
+	m_pRoot->CollisionCheck();
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
@@ -62,7 +65,7 @@ void Application::Display(void)
 	ClearScreen();
 
 	//display octree
-	//m_pRoot->Display(); <---
+	m_pRoot->Display(m_uOctantID);
 	m_pMeshMngr->AddCubeToRenderList(IDENTITY_M4, C_RED, RENDER_WIRE);
 	
 	// draw a skybox
@@ -79,6 +82,8 @@ void Application::Display(void)
 	
 	//end the current frame (internally swaps the front and back buffers)
 	m_pWindow->display();
+
+
 }
 void Application::Release(void)
 {
