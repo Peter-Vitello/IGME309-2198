@@ -113,6 +113,13 @@ public:
 	OUTPUT: ---
 	*/
 	void ApplyForce(vector3 a_v3Force);
+
+	// the distance calculation for the entities
+	float Astar(vector3 P1, vector3 P2);
+
+	// drawing the distance between steve and the zomibe 
+	void drawAstar(vector3 P1, vector3 P2, vector3 a_v3Color);
+	
 	/*
 	USAGE: Updates the MySolver
 	ARGUMENTS: ---

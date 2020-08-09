@@ -200,6 +200,7 @@ void Simplex::OctreeNode::SplitOctreeNode()
 		m_pChild[5] = new OctreeNode((midpoints + m_v3Min) / 2, m_v3Min, midpoints, this);
 
 		// back bottom right octant DONE
+		std::vector<std::vector<std::vector<glm::vec3>>> myVariable = vector3(m_v3Max.x, midpoints.y, m_v3Max.z);
 		newMax = vector3(m_v3Max.x, midpoints.y, m_v3Max.z);
 		newMin = vector3(midpoints.x, m_v3Min.y, midpoints.z);
 		m_pChild[6] = new OctreeNode((newMax + newMin) / 2, newMin, newMax, this);

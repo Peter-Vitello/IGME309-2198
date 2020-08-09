@@ -8,6 +8,7 @@ void MySolver::Init(void)
 	m_v3Velocity = ZERO_V3;
 	m_fMass = 1.0f;
 }
+
 void MySolver::Swap(MySolver& other)
 {
 	std::swap(m_v3Acceleration, other.m_v3Acceleration);
@@ -15,6 +16,7 @@ void MySolver::Swap(MySolver& other)
 	std::swap(m_v3Position, other.m_v3Position);
 	std::swap(m_fMass, other.m_fMass);
 }
+
 void MySolver::Release(void){/*nothing to deallocate*/ }
 //The big 3
 MySolver::MySolver(void){ Init(); }
@@ -25,6 +27,7 @@ MySolver::MySolver(MySolver const& other)
 	m_v3Position = other.m_v3Position;
 	m_fMass = other.m_fMass;
 }
+
 MySolver& MySolver::operator=(MySolver const& other)
 {
 	if (this != &other)
@@ -63,6 +66,7 @@ void MySolver::ApplyFriction(float a_fFriction)
 	if (glm::length(m_v3Velocity) < 0.01f)
 		m_v3Velocity = ZERO_V3;
 }
+
 void MySolver::ApplyForce(vector3 a_v3Force)
 {
 	//check minimum mass
@@ -71,6 +75,33 @@ void MySolver::ApplyForce(vector3 a_v3Force)
 	//f = m * a -> a = f / m
 	m_v3Acceleration += a_v3Force / m_fMass;
 }
+
+
+// finds the distance between the 2 objects using the steve and the zombie 
+
+float Simplex::MySolver::Astar(vector3 P1, vector3 P2)
+{
+		int xd = P2.x - P1.x;
+		int yd = P2.y - P1.y;
+		int zd = P2.z - P1.z;
+
+		return glm::sqrt(xd * xd + yd * yd + zd * zd);
+
+		drawAstar(P1, P2, C_BLUE_CORNFLOWER);
+}
+
+// draws that distance between the zombie and steve 
+
+void Simplex::MySolver::drawAstar(vector3 P1, vector3 P2, vector3 a_v3Color)
+{
+	glBegin(GL_LINES);
+	P1;
+	P2;
+	glEnd();
+}
+
+
+
 vector3 CalculateMaxVelocity(vector3 a_v3Velocity, float maxVelocity)
 {
 	if (glm::length(a_v3Velocity) > maxVelocity)

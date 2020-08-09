@@ -46,7 +46,7 @@ void Application::Display(void)
 
 	//Sol2
 	//Get a timer
-	static float fTimer = 0;	//store the new timer
+	static float fTimer = 0; //store the new timer
 	static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
 	fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
 

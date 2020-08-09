@@ -320,7 +320,7 @@ private:
 	MyEntityManager(void);
 	/*
 	Usage: copy constructor
-	Arguments: class object to copy
+	//Arguments: class object to copy
 	Output: class object instance
 	*/
 	MyEntityManager(MyEntityManager const& a_pOther);

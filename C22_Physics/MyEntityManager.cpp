@@ -517,3 +517,4 @@ void Simplex::MyEntityManager::UsePhysicsSolver(bool a_bUse, uint a_uIndex)
 
 	return m_mEntityArray[a_uIndex]->UsePhysicsSolver(a_bUse);
 }
+

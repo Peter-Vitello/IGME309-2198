@@ -392,6 +392,7 @@ public:
 	ARGUMENTS: ---
 	OUTPUT: number of render calls
 	*/
+	//uint Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel);
 	uint Render(void);
 	/*
 	USAGE: Get the number of meshes in the mesh manager
@@ -425,6 +426,7 @@ public:
 	OUTPUT: ---
 	*/
 	void PrintLine(String a_sInput, vector3 a_v3Color = C_WHITE);
+
 	/*
 	USAGE: Renders a char array in the specified color
 	ARGUMENTS:
